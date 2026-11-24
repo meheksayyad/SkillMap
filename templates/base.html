@@ -1,0 +1,86 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>{% block title %}SkillMap{% endblock %}</title>
+  <style>
+    :root { --bg:#f5f6fb; --card:#fff; --ink:#1b2133; --muted:#667085; --brand:#4f46e5;
+            --ok:#067647; --okbg:#d1fadf; --bad:#b42318; --badbg:#fee4e2; --warn:#93370d;
+            --warnbg:#fef0c7; --line:#e4e7ec; --chip:#eef0f7; }
+    @media (prefers-color-scheme: dark) {
+      :root { --bg:#12141c; --card:#1b1f2b; --ink:#e8eaf2; --muted:#9aa3b5; --brand:#8b83ff;
+              --ok:#6ce9a6; --okbg:#0b3d29; --bad:#fda29b; --badbg:#4a1511; --warn:#fec84b;
+              --warnbg:#4a3306; --line:#2b3040; --chip:#262b3b; }
+    }
+    * { box-sizing:border-box; }
+    body { margin:0; font:16px/1.55 system-ui,-apple-system,Segoe UI,Roboto,sans-serif;
+           background:var(--bg); color:var(--ink); }
+    a { color:var(--brand); text-decoration:none; } a:hover { text-decoration:underline; }
+    nav { background:var(--card); border-bottom:1px solid var(--line); padding:.7rem 1rem;
+          display:flex; flex-wrap:wrap; gap:1rem; align-items:center; }
+    nav .brand { font-weight:800; font-size:1.2rem; color:var(--ink); margin-right:auto; }
+    nav form { margin:0; }
+    main { max-width:980px; margin:1.5rem auto; padding:0 1rem 3rem; }
+    h1 { font-size:1.7rem; margin:.2rem 0 .6rem; } h2 { font-size:1.2rem; margin:1.6rem 0 .6rem; }
+    h3 { font-size:1rem; margin:1rem 0 .4rem; }
+    .card { background:var(--card); border:1px solid var(--line); border-radius:12px;
+            padding:1rem 1.25rem; margin-bottom:1rem; }
+    .grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(280px,1fr)); gap:1rem; }
+    .muted { color:var(--muted); font-size:.92rem; }
+    .btn, button { font:inherit; border:0; border-radius:8px; padding:.5rem 1rem; cursor:pointer;
+                   background:var(--brand); color:#fff; display:inline-block; }
+    .btn.secondary, button.secondary { background:var(--chip); color:var(--ink); }
+    .btn.danger, button.danger { background:var(--bad); color:#fff; }
+    button.small, .btn.small { padding:.25rem .65rem; font-size:.88rem; }
+    input, select, textarea { font:inherit; padding:.45rem .65rem; border:1px solid var(--line);
+        border-radius:8px; width:100%; background:var(--card); color:var(--ink); }
+    input[type=checkbox], input[type=radio] { width:auto; }
+    textarea { font-family:ui-monospace,Menlo,Consolas,monospace; font-size:.9rem; }
+    label { display:block; font-weight:600; margin:.7rem 0 .2rem; }
+    .errorlist { color:var(--bad); list-style:none; padding:0; margin:.2rem 0; font-size:.9rem; }
+    .helptext { color:var(--muted); font-size:.85rem; display:block; }
+    ul.checks { list-style:none; padding:0; } ul.checks label { font-weight:400; margin:.2rem 0; }
+    .msg { padding:.7rem 1rem; border-radius:8px; margin-bottom:.8rem; }
+    .msg.success { background:var(--okbg); } .msg.error { background:var(--badbg); }
+    .msg.info, .msg.warning { background:var(--warnbg); }
+    .chips { display:flex; flex-wrap:wrap; gap:.4rem; margin:.3rem 0 .6rem; }
+    .chip { background:var(--chip); border-radius:999px; padding:.15rem .7rem; font-size:.88rem; font-weight:600; }
+    .chip.ok { background:var(--okbg); color:var(--ok); }
+    .chip.bad { background:var(--badbg); color:var(--bad); }
+    .chip.warn { background:var(--warnbg); color:var(--warn); }
+    .ring { --p:0; width:120px; height:120px; border-radius:50%; display:grid; place-items:center;
+            background:conic-gradient(var(--brand) calc(var(--p) * 1%), var(--chip) 0); flex:none; }
+    .ring span { width:92px; height:92px; border-radius:50%; background:var(--card); display:grid;
+                 place-items:center; font-size:2rem; font-weight:800; }
+    .score-row { display:flex; gap:1.5rem; align-items:center; flex-wrap:wrap; }
+    table { width:100%; border-collapse:collapse; } th,td { text-align:left; padding:.55rem .4rem;
+            border-bottom:1px solid var(--line); vertical-align:middle; }
+    ol.path { padding-left:1.2rem; } ol.path li { margin:.35rem 0; }
+    .row { display:flex; gap:.5rem; flex-wrap:wrap; align-items:center; }
+    .pass { color:var(--ok); } .fail { color:var(--bad); }
+    pre.text { white-space:pre-wrap; background:var(--chip); padding:.8rem; border-radius:8px;
+               max-height:260px; overflow:auto; font-size:.85rem; }
+  </style>
+</head>
+<body>
+<nav>
+  <a class="brand" href="{% url 'home' %}">SkillMap</a>
+  <a href="{% url 'home' %}">Quick check</a>
+  <a href="{% url 'skills' %}">Skills</a>
+  {% if user.is_authenticated %}
+    <a href="{% url 'dashboard' %}">Dashboard</a>
+    <form method="post" action="{% url 'logout' %}">{% csrf_token %}
+      <button class="secondary small">Log out ({{ user.get_username }})</button>
+    </form>
+  {% else %}
+    <a href="{% url 'login' %}">Log in</a>
+    <a class="btn small" href="{% url 'signup' %}">Sign up</a>
+  {% endif %}
+</nav>
+<main>
+  {% for m in messages %}<div class="msg {{ m.tags }}">{{ m }}</div>{% endfor %}
+  {% block content %}{% endblock %}
+</main>
+</body>
+</html>
