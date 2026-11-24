@@ -1,0 +1,18 @@
+{% extends "base.html" %}
+{% block title %}Analyze · SkillMap{% endblock %}
+{% block content %}
+<h1>Run an analysis</h1>
+<p class="muted">Pick one resume and one or more jobs. With several jobs you get a ranked list, best match first.</p>
+<div class="card">
+  <form method="post">{% csrf_token %}
+    {{ form.non_field_errors }}
+    {{ form.resume.label_tag }}{{ form.resume.errors }}{{ form.resume }}
+    {{ form.jobs.label_tag }}{{ form.jobs.errors }}
+    <ul class="checks">
+      {% for checkbox in form.jobs %}<li>{{ checkbox }}</li>{% endfor %}
+    </ul>
+    <button>Analyze</button>
+    <a class="btn secondary" href="{% url 'dashboard' %}">Cancel</a>
+  </form>
+</div>
+{% endblock %}

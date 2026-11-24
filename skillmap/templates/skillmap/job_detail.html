@@ -1,0 +1,33 @@
+{% extends "base.html" %}
+{% block title %}{{ job.title }} · SkillMap{% endblock %}
+{% block content %}
+<div class="row" style="justify-content:space-between">
+  <h1>{{ job.title }}</h1>
+  <div class="row">
+    <a class="btn" href="{% url 'analyze' %}?job={{ job.id }}">Analyze a resume against this</a>
+    <form method="post" action="{% url 'job_delete' job.id %}">{% csrf_token %}
+      <button class="danger" onclick="return confirm('Delete this job and its analyses?')">Delete</button>
+    </form>
+  </div>
+</div>
+<p class="muted">{{ job.company }}</p>
+
+<div class="grid">
+  <div class="card"><h3 style="margin-top:0">Required skills found</h3>
+    <div class="chips">{% for s in required %}<span class="chip bad">{{ s }}</span>{% empty %}<span class="muted">None detected.</span>{% endfor %}</div></div>
+  <div class="card"><h3 style="margin-top:0">Nice-to-have skills found</h3>
+    <div class="chips">{% for s in preferred %}<span class="chip warn">{{ s }}</span>{% empty %}<span class="muted">None detected.</span>{% endfor %}</div></div>
+</div>
+
+{% if analyses %}
+<h2>Analyses</h2>
+<div class="card"><table>
+  {% for a in analyses %}
+    <tr><td><a href="{% url 'analysis_detail' a.id %}">{{ a.resume.title }}</a></td><td>{{ a.score }} · {{ a.label }}</td></tr>
+  {% endfor %}
+</table></div>
+{% endif %}
+
+<h2>Description</h2>
+<pre class="text">{{ job.text }}</pre>
+{% endblock %}

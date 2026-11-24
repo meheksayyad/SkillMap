@@ -1,0 +1,55 @@
+<div class="card">
+  <div class="score-row">
+    <div class="ring" style="--p:{{ result.score }}"><span>{{ result.score }}</span></div>
+    <div>
+      <h2 style="margin:0">{{ result.label }}</h2>
+      {% if result.skill_score != None %}
+        <p class="muted" style="margin:.3rem 0 0">
+          Skill coverage {% widthratio result.skill_score 1 100 %}% (80% of the score) ·
+          wording similarity {% widthratio result.text_score 1 100 %}% (20%)
+        </p>
+      {% else %}
+        <p class="muted" style="margin:.3rem 0 0">
+          No known skills were detected in this job description, so the score uses wording similarity only.
+        </p>
+      {% endif %}
+    </div>
+  </div>
+</div>
+
+<div class="grid">
+  <div class="card">
+    <h3 style="margin-top:0">Required skills you have</h3>
+    <div class="chips">{% for s in result.matched_required %}<span class="chip ok">{{ s }}</span>{% empty %}<span class="muted">None found.</span>{% endfor %}</div>
+    <h3>Required skills you're missing</h3>
+    <div class="chips">{% for s in result.missing_required %}<span class="chip bad">{{ s }}</span>{% empty %}<span class="muted">Nothing missing. Nice.</span>{% endfor %}</div>
+  </div>
+  <div class="card">
+    <h3 style="margin-top:0">Nice-to-have skills you have</h3>
+    <div class="chips">{% for s in result.matched_preferred %}<span class="chip ok">{{ s }}</span>{% empty %}<span class="muted">None found.</span>{% endfor %}</div>
+    <h3>Nice-to-have skills you're missing</h3>
+    <div class="chips">{% for s in result.missing_preferred %}<span class="chip warn">{{ s }}</span>{% empty %}<span class="muted">Nothing missing.</span>{% endfor %}</div>
+  </div>
+</div>
+
+<div class="card">
+  <h3 style="margin-top:0">Other skills on your resume (not asked for in this job)</h3>
+  <div class="chips">{% for s in result.extra_skills %}<span class="chip">{{ s }}</span>{% empty %}<span class="muted">None.</span>{% endfor %}</div>
+</div>
+
+<div class="card">
+  <h2 style="margin-top:0">Suggested learning order</h2>
+  {% if result.learning_path %}
+    <p class="muted">Prerequisites come first, then required skills, then nice-to-haves.</p>
+    <ol class="path">
+      {% for step in result.learning_path %}
+        <li><strong>{{ step.skill }}</strong>
+          <span class="chip {% if step.kind == 'required' %}bad{% elif step.kind == 'preferred' %}warn{% endif %}">{{ step.kind }}</span>
+          <span class="muted">{{ step.category }}{% if step.needed_for %} · unlocks {{ step.needed_for|join:", " }}{% endif %}</span>
+        </li>
+      {% endfor %}
+    </ol>
+  {% else %}
+    <p class="muted">No gaps to close for this job.</p>
+  {% endif %}
+</div>

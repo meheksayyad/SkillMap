@@ -1,0 +1,37 @@
+{% extends "base.html" %}
+{% block title %}{{ resume.title }} · SkillMap{% endblock %}
+{% block content %}
+<div class="row" style="justify-content:space-between">
+  <h1>{{ resume.title }}</h1>
+  <div class="row">
+    <a class="btn" href="{% url 'analyze' %}?resume={{ resume.id }}">Analyze against jobs</a>
+    <form method="post" action="{% url 'resume_delete' resume.id %}">{% csrf_token %}
+      <button class="danger" onclick="return confirm('Delete this resume and its analyses?')">Delete</button>
+    </form>
+  </div>
+</div>
+<p class="muted">{% if resume.source_filename %}From {{ resume.source_filename }} · {% endif %}Saved {{ resume.created_at|date:"d M Y" }}</p>
+
+<h2>Skills detected</h2>
+<div class="card">
+  {% for category, names in skill_groups %}
+    <h3 style="margin-top:0">{{ category }}</h3>
+    <div class="chips">{% for n in names %}<span class="chip ok">{{ n }}</span>{% endfor %}</div>
+  {% empty %}<span class="muted">No known skills detected. Check that your skills are written out by name.</span>{% endfor %}
+  <p class="muted">Detection is keyword-based. A skill you describe without naming it won't be found.</p>
+</div>
+
+{% include "skillmap/_health.html" with health=health %}
+
+{% if analyses %}
+<h2>Analyses</h2>
+<div class="card"><table>
+  {% for a in analyses %}
+    <tr><td><a href="{% url 'analysis_detail' a.id %}">{{ a.job.title }}</a></td><td>{{ a.score }} · {{ a.label }}</td></tr>
+  {% endfor %}
+</table></div>
+{% endif %}
+
+<h2>Extracted text</h2>
+<pre class="text">{{ resume.text }}</pre>
+{% endblock %}

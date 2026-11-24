@@ -1,0 +1,12 @@
+{% extends "base.html" %}
+{% block title %}Add job · SkillMap{% endblock %}
+{% block content %}
+<h1>Add a job description</h1>
+<div class="card">
+  <form method="post">{% csrf_token %}
+    {{ form.as_p }}
+    <span class="helptext">Keep section headings such as "Requirements" and "Nice to have" so skills are classified correctly.</span>
+    <p><button>Save job</button> <a class="btn secondary" href="{% url 'dashboard' %}">Cancel</a></p>
+  </form>
+</div>
+{% endblock %}

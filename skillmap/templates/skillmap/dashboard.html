@@ -1,0 +1,44 @@
+{% extends "base.html" %}
+{% block title %}Dashboard · SkillMap{% endblock %}
+{% block content %}
+<h1>Dashboard</h1>
+<div class="row" style="margin-bottom:1rem">
+  <a class="btn" href="{% url 'analyze' %}">Run an analysis</a>
+  <a class="btn secondary" href="{% url 'resume_add' %}">+ Resume</a>
+  <a class="btn secondary" href="{% url 'job_add' %}">+ Job description</a>
+</div>
+
+<div class="grid">
+  <div class="card">
+    <h2 style="margin-top:0">Resumes ({{ resumes|length }})</h2>
+    {% for r in resumes %}
+      <div class="row" style="justify-content:space-between">
+        <a href="{% url 'resume_detail' r.id %}">{{ r.title }}</a>
+        <a class="muted" href="{% url 'analyze' %}?resume={{ r.id }}">analyze</a>
+      </div>
+    {% empty %}<p class="muted">None yet. <a href="{% url 'resume_add' %}">Add your resume</a>.</p>{% endfor %}
+  </div>
+  <div class="card">
+    <h2 style="margin-top:0">Job descriptions ({{ jobs|length }})</h2>
+    {% for j in jobs %}
+      <div class="row" style="justify-content:space-between">
+        <a href="{% url 'job_detail' j.id %}">{{ j.title }}{% if j.company %} · {{ j.company }}{% endif %}</a>
+      </div>
+    {% empty %}<p class="muted">None yet. <a href="{% url 'job_add' %}">Add a job</a>.</p>{% endfor %}
+  </div>
+</div>
+
+<h2>Recent analyses</h2>
+<div class="card">
+  {% if recent %}
+  <table>
+    {% for a in recent %}
+      <tr>
+        <td><a href="{% url 'analysis_detail' a.id %}">{{ a.resume.title }} → {{ a.job.title }}</a></td>
+        <td><strong>{{ a.score }}</strong> <span class="muted">{{ a.label }}</span></td>
+      </tr>
+    {% endfor %}
+  </table>
+  {% else %}<span class="muted">Nothing analyzed yet.</span>{% endif %}
+</div>
+{% endblock %}

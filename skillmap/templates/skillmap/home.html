@@ -1,0 +1,31 @@
+{% extends "base.html" %}
+{% block content %}
+<h1>How well does your resume match the job?</h1>
+<p class="muted">Paste or upload your resume and a job description. SkillMap finds the skills each one mentions,
+scores the match, and lists what to learn next. No sign-up needed, and nothing you enter here is saved.</p>
+
+<form method="post" enctype="multipart/form-data">{% csrf_token %}
+  {{ form.non_field_errors }}
+  <div class="grid">
+    <div class="card">
+      {{ form.resume_text.label_tag }}{{ form.resume_text.errors }}{{ form.resume_text }}
+      {{ form.resume_file.label_tag }}{{ form.resume_file.errors }}{{ form.resume_file }}
+      <span class="helptext">{{ form.resume_file.help_text }}</span>
+    </div>
+    <div class="card">
+      {{ form.job_text.label_tag }}{{ form.job_text.errors }}{{ form.job_text }}
+      <span class="helptext">Tip: keep headings like "Requirements" and "Nice to have". They tell SkillMap which skills are essential.</span>
+    </div>
+  </div>
+  <button>Analyze match</button>
+</form>
+
+{% if result %}
+  <h2>Result</h2>
+  {% include "skillmap/_result.html" %}
+  <h2>Your resume on its own</h2>
+  {% include "skillmap/_health.html" with health=result.resume_health %}
+  <p class="muted">Want to save resumes, compare against many jobs and see a ranked list?
+    <a href="{% url 'signup' %}">Create a free account</a>.</p>
+{% endif %}
+{% endblock %}

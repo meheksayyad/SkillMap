@@ -1,0 +1,11 @@
+{% extends "base.html" %}
+{% block title %}Analysis · SkillMap{% endblock %}
+{% block content %}
+<h1>{{ analysis.resume.title }} → {{ analysis.job.title }}</h1>
+<p class="muted">{{ analysis.job.company }} · analyzed {{ analysis.created_at|date:"d M Y, H:i" }} ·
+  <a href="{% url 'rank' analysis.resume_id %}">see ranking</a> ·
+  <a href="{% url 'analyze' %}?resume={{ analysis.resume_id }}&job={{ analysis.job_id }}">re-run</a></p>
+{% include "skillmap/_result.html" %}
+<h2>Resume health</h2>
+{% include "skillmap/_health.html" with health=health %}
+{% endblock %}

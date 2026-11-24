@@ -1,0 +1,17 @@
+{% extends "base.html" %}
+{% block title %}Skills · SkillMap{% endblock %}
+{% block content %}
+<h1>Skill taxonomy</h1>
+<p class="muted">{{ total }} skills SkillMap can recognise. Hover a skill to see what it builds on.
+  Admins can add or edit skills in the admin site.</p>
+{% for category, skills in groups %}
+  <div class="card">
+    <h3 style="margin-top:0">{{ category }}</h3>
+    <div class="chips">
+      {% for s in skills %}
+        <span class="chip" title="{% if s.prerequisites.all %}Builds on: {% for p in s.prerequisites.all %}{{ p.name }}{% if not forloop.last %}, {% endif %}{% endfor %}{% else %}No prerequisites{% endif %}">{{ s.name }}</span>
+      {% endfor %}
+    </div>
+  </div>
+{% endfor %}
+{% endblock %}

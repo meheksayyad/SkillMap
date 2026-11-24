@@ -1,0 +1,18 @@
+<div class="card">
+  <div class="score-row">
+    <div class="ring" style="--p:{{ health.score }}"><span>{{ health.score }}</span></div>
+    <div>
+      <h2 style="margin-top:0">Resume health</h2>
+      <p class="muted">{{ health.passed }} of {{ health.total }} checks passed · {{ health.word_count }} words.
+        These are general ATS-style checks, independent of any job.</p>
+    </div>
+  </div>
+  <table>
+    {% for c in health.checks %}
+      <tr>
+        <td style="width:2rem" class="{% if c.passed %}pass{% else %}fail{% endif %}">{% if c.passed %}✔{% else %}✖{% endif %}</td>
+        <td>{{ c.label }}{% if not c.passed %}<div class="muted">{{ c.tip }}</div>{% endif %}</td>
+      </tr>
+    {% endfor %}
+  </table>
+</div>

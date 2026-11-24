@@ -1,0 +1,20 @@
+{% extends "base.html" %}
+{% block title %}Ranking · SkillMap{% endblock %}
+{% block content %}
+<h1>Best-fit jobs for “{{ resume.title }}”</h1>
+<div class="card">
+  <table>
+    <tr><th>#</th><th>Job</th><th>Score</th><th>Missing required</th><th></th></tr>
+    {% for a in analyses %}
+      <tr>
+        <td>{{ forloop.counter }}</td>
+        <td>{{ a.job.title }}{% if a.job.company %} <span class="muted">· {{ a.job.company }}</span>{% endif %}</td>
+        <td><strong>{{ a.score }}</strong> <span class="muted">{{ a.label }}</span></td>
+        <td>{% for s in a.details.missing_required|slice:":4" %}<span class="chip bad">{{ s }}</span> {% empty %}<span class="muted">none</span>{% endfor %}</td>
+        <td><a href="{% url 'analysis_detail' a.id %}">Details</a></td>
+      </tr>
+    {% empty %}<tr><td colspan="5" class="muted">No analyses yet.</td></tr>{% endfor %}
+  </table>
+</div>
+<a class="btn secondary" href="{% url 'analyze' %}?resume={{ resume.id }}">Compare more jobs</a>
+{% endblock %}
