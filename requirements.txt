@@ -1,0 +1,8 @@
+Django>=6.1,<6.2
+djangorestframework>=3.16
+whitenoise>=6.9
+gunicorn>=23.0
+pypdf>=5.0
+python-docx>=1.1
+# Only needed if you use PostgreSQL (set DB_NAME etc.):
+psycopg[binary]>=3.2
